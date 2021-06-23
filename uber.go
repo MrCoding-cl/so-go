@@ -1,4 +1,4 @@
-package main
+package sogo
 
 import "log"
 
