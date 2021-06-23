@@ -1,4 +1,4 @@
-package sogo
+package main
 
 type client struct {
 	id, x, y, objX, objY, time int
