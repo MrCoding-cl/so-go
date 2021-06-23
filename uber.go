@@ -22,7 +22,7 @@ type Uber struct {
 	setClient                         ubersetClient
 }
 
-func createUber(id int, x int, y int, world *world) Uber {
+func createUber(id, x, y int, world *world) Uber {
 	possibles := make(map[string]struct{ x, y int })
 	possibles["S"] = struct{ x, y int }{x: 0, y: -1}
 	possibles["N"] = struct{ x, y int }{x: 0, y: 1}
