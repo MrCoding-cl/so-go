@@ -1,13 +1,18 @@
 package main
 
-import "log"
+import (
+	"log"
+	"sync"
+)
 
 type worldFilterWaitingClients func(world2 *world)
 type worldAddClient func(world2 *world, client2 *client)
 type worldclientstowaitinglist func(world2 *world)
-type worlduberforclient func(world2 *world, client2 *client) bool
+type worlduberforclient func(world2 *world, client2 *client, ubers *[]*Uber) bool
 type worldGetAvalaibleUbers func(world2 *world) []*Uber
 type worldRunWithoutPram func(world2 *world)
+type worldRunWithPram func(world2 *world)
+type worldRunWithPramTwoProcess func(world2 *world)
 
 type world struct {
 	maxX, maxY, time, ubertraveled int
@@ -20,12 +25,14 @@ type world struct {
 	uberForClient                  worlduberforclient
 	getAvalaibleUbers              worldGetAvalaibleUbers
 	runwWithoutPram                worldRunWithoutPram
+	runWithPram                    worldRunWithPram
+	runWithPram2Process            worldRunWithPramTwoProcess
 }
 
 func createWorld() world {
 	return world{
-		maxX:           0,
-		maxY:           0,
+		maxX:           1000,
+		maxY:           1000,
 		time:           0,
 		ubertraveled:   0,
 		ubers:          make([]*Uber, 0),
@@ -60,20 +67,23 @@ func createWorld() world {
 			}
 			return newlist
 		},
-		uberForClient: func(world2 *world, client2 *client) bool {
+		uberForClient: func(world2 *world, client2 *client, ubers *[]*Uber) bool {
 			total := 0.0
-			ubers := world2.getAvalaibleUbers(world2)
-			if len(ubers) == 0 { // No ubers avalaible
+			//ubers :=
+			if len(*ubers) == 0 { // No ubers avalaible
 				return false
 			}
-			for _, uber := range ubers {
+			for _, uber := range *ubers {
 				total += DistanceBetween(client2, uber)
 			}
 			probs := make(map[*Uber]float64)
-			for _, uber := range ubers {
+			for _, uber := range *ubers {
 				probs[uber] = DistanceBetween(client2, uber) / total
 			}
 			uber := selectConditionedUber(probs)
+			//if !uber.setClient(uber, client2) {
+			//	world2.uberForClient(world2, client2)
+			//}
 			uber.setClient(uber, client2)
 			return true
 		},
@@ -82,7 +92,11 @@ func createWorld() world {
 				world2.filterWaitingClients(world2)
 				world2.clientsToWaitingList(world2)
 				for _, client := range world2.waitingclients {
-					if !world2.uberForClient(world2, client){
+					ubers := world2.getAvalaibleUbers(world2)
+					if len(ubers) == 0 {
+						break
+					}
+					if !world2.uberForClient(world2, client, &ubers) {
 						break // Because there's no more ubers avalaible
 					}
 				}
@@ -90,7 +104,70 @@ func createWorld() world {
 					uber.makeMove(uber)
 				}
 				world2.time += 1
-				log.Println(world2.time,world2.ubertraveled)
+				log.Println(world2.time, world2.ubertraveled)
+			}
+		},
+		runWithPram: func(world2 *world) {
+			for world2.time < 12000 {
+				world2.filterWaitingClients(world2)
+				world2.clientsToWaitingList(world2)
+				var wg = new(sync.WaitGroup)
+				for _, client := range world2.waitingclients {
+					ubers := world2.getAvalaibleUbers(world2)
+					if len(ubers) == 0 {
+						break
+					}
+					wg.Add(1)
+					client := client
+					go func() {
+						defer wg.Done()
+						world2.uberForClient(world2, client, &ubers)
+					}()
+				}
+				wg.Wait()
+				for _, uber := range world2.ubers {
+					if uber.client == nil {
+						continue
+					}
+					wg.Add(1)
+					go func(uber *Uber) {
+						defer wg.Done()
+						uber.makeMove(uber)
+					}(uber)
+					//uber.makeMove(uber)
+				}
+				wg.Wait()
+				world2.time += 1
+				log.Println(world2.time, world2.ubertraveled)
+			}
+		},
+		runWithPram2Process: func(world2 *world) {
+			for world2.time < 12000 {
+				var wg = new(sync.WaitGroup)
+				wg.Add(2)
+				go func() {
+					defer wg.Done()
+					world2.filterWaitingClients(world2)
+					world2.clientsToWaitingList(world2)
+					for _, client := range world2.waitingclients {
+						ubers := world2.getAvalaibleUbers(world2)
+						if len(ubers) == 0 {
+							break
+						}
+						if !world2.uberForClient(world2, client, &ubers) {
+							break // Because there's no more ubers avalaible
+						}
+					}
+				}()
+				go func() {
+					defer wg.Done()
+					for _, uber := range world2.ubers {
+						uber.makeMove(uber)
+					}
+				}()
+				wg.Wait()
+				world2.time += 1
+				log.Println(world2.time, world2.ubertraveled)
 			}
 		},
 	}
