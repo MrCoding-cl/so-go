@@ -67,13 +67,13 @@ func createWorld() world {
 				return false
 			}
 			for _, uber := range ubers {
-				total += DistanceBetween(*client2, *uber)
+				total += DistanceBetween(client2, uber)
 			}
 			probs := make(map[*Uber]float64)
 			for _, uber := range ubers {
-				probs[uber] = DistanceBetween(*client2, *uber) / total
+				probs[uber] = DistanceBetween(client2, uber) / total
 			}
-			uber := selectConditionedUber(probs,0)
+			uber := selectConditionedUber(probs)
 			uber.setClient(uber, client2)
 			return true
 		},

@@ -110,7 +110,7 @@ func createUber(id int, x int, y int, world *world) Uber {
 				uber.client.waiting = false
 				uber.avalaible = false
 				uber.setPathtoObjetive(uber, client2.x, client2.y)
-				log.Println("Client received Uber ID", uber.id, "Distance to the client: ", DistanceBetween(*client2, *uber))
+				log.Println("Client received Uber ID", uber.id, "Distance to the client: ", DistanceBetween(client2, uber))
 				return true
 			}
 			return false

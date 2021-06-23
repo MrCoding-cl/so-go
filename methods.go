@@ -3,69 +3,47 @@ package main
 import (
 	"math"
 	"math/rand"
+	"sort"
 	"time"
 )
 
-func selectConditionedUber(ubers map[*Uber]float64, c int) *Uber { // Conditioned random select...
+func selectConditionedUber(ubers map[*Uber]float64) *Uber {
+	/*
+		Conditioned random select
+		receives a map of the ubers with their respective probabilities, sorts them from highest to lowest probability,
+		then creates a summation of each element's probability with the previous one.
+		The last element has a probability of 1. It draws a floating point number between 0 and 1 and starts checking
+		from the first uber if it has a probability greater than that of the floating point and is selected,
+		thus achieving uniformity and maintaining the rule of the probability difference between each of the elements.
+	*/
 	rand.Seed(time.Now().Unix())
-	newmap := make(map[*Uber]float64)
-	for len(newmap) == 0 {
-		selector := rand.Float64()
-		for uber, f := range ubers {
-			if f > selector {
-				newmap[uber] = f
+	keys := make([]*Uber, 0)
+	for key := range ubers {
+		if ubers[key] > 0.0 {
+			keys = append(keys, key)
+		}
+	}
+	sort.Slice(keys, func(i, j int) bool { return ubers[keys[i]] > ubers[keys[j]] })
+	acum := 0.0
+	for _, key := range keys {
+		ubers[key] += acum
+		acum = ubers[key]
+	}
+	var uberWon *Uber = nil
+	for uberWon == nil {
+		winnerprob := rand.Float64()
+		for _, key := range keys {
+			uberprob := ubers[key]
+			if winnerprob <= uberprob {
+				uberWon = key
+				break
 			}
 		}
 	}
-	if c == 10 { // Limit. because when it is reached all ubers haves similar probs
-		winner := rand.Intn(len(newmap))
-		c := 0
-		for uber, _ := range newmap {
-			if c == winner {
-				return uber
-			}
-			c += 1
-		}
-	}
-	if len(newmap) > 2 {
-		total := 0.0
-		for _, f := range newmap {
-			total += f
-		}
-		for uber, f := range newmap {
-			newmap[uber] = f / total // Makes a new prob with the winners
-		}
-		return selectConditionedUber(newmap, c+1)
-	} else if len(newmap) == 2 {
-		total := 0.0
-		for _, f := range newmap {
-			if total != 0 {
-				if total == f { // the probability is small but not 0
-					result := rand.Intn(2) // 50 to 50.
-					c := 0
-					for uber := range newmap {
-						if c == result {
-							return uber
-						}
-						c += 1
-					}
-				}
-			}
-			total += f
-		}
-		for uber, f := range newmap {
-			newmap[uber] = f / total
-		}
-		return selectConditionedUber(newmap, c+1)
-	}
-	var result *Uber = nil
-	for uber := range newmap {
-		result = uber
-	}
-	return result
+	return uberWon
 }
 
-func DistanceBetween(client2 client, uber Uber) float64 {
+func DistanceBetween(client2 *client, uber *Uber) float64 {
 	var deltaX, deltaY float64
 	if client2.waiting || !client2.picked {
 		deltaX = math.Abs(float64(client2.x - uber.x))
