@@ -125,10 +125,24 @@ func readDataRequest(path string) []request {
 }
 
 func readDataTime(path string) []coordenadas {
-	//This is the function you are going to use to read the data at night, morning, afternoon, etc...
+	//This is the function you are going to use to read the data at night, mo0rning, afternoon, etc...
 	content, _ := os.Open(path)
 	reader := bufio.NewReader(content)
 	lines := readData(content, reader)
 
 	return lines
+}
+func addClientsToWorld(world *world, path string) {
+	request := readDataRequest(path)
+	for id, r := range request {
+		client := createClient(id, r.xi, r.yi, r.xf, r.yf, r.t, world)
+		world.addClient(world, &client)
+	}
+}
+func addUbersToWorld(world *world, path string) {
+	request := readDataTime(path)
+	for id, r := range request {
+		uber := createUber(id, r.x, r.y, world)
+		world.ubers = append(world.ubers, &uber)
+	}
 }
