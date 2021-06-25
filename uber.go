@@ -2,25 +2,26 @@ package main
 
 import "log"
 
-type uberMoveType func(uber *Uber, deltax, deltay int)
-type ubergetCoord func(uber *Uber) (int, int)
-type ubersetPathtoObjetive func(uber *Uber, deltax, deltay int)
-type ubermakeMove func(uber *Uber) bool
-type ubersetClient func(uber *Uber, client2 *client) bool
-
-type Uber struct {
-	id, x, y, movements, currentIndex int
-	avalaible                         bool
-	pathtoObj                         []rune
-	world                             *world // Just a pretty language ♥
-	possibles                         map[string]struct{ x, y int }
-	move                              uberMoveType
-	getCoord                          ubergetCoord
-	setPathtoObjetive                 ubersetPathtoObjetive
-	client                            *client
-	makeMove                          ubermakeMove
-	setClient                         ubersetClient
-}
+type (
+	uberMoveType          func(uber *Uber, deltax, deltay int)
+	ubergetCoord          func(uber *Uber) (int, int)
+	ubersetPathtoObjetive func(uber *Uber, deltax, deltay int)
+	ubermakeMove          func(uber *Uber) bool
+	ubersetClient         func(uber *Uber, client2 *client) bool
+	Uber                  struct {
+		id, x, y, movements, currentIndex int
+		avalaible                         bool
+		pathtoObj                         []byte
+		world                             *world // Just a pretty language ♥
+		possibles                         map[string]struct{ x, y int }
+		move                              uberMoveType
+		getCoord                          ubergetCoord
+		setPathtoObjetive                 ubersetPathtoObjetive
+		client                            *client
+		makeMove                          ubermakeMove
+		setClient                         ubersetClient
+	}
+)
 
 func createUber(id, x, y int, world *world) Uber {
 	possibles := make(map[string]struct{ x, y int })
@@ -35,7 +36,7 @@ func createUber(id, x, y int, world *world) Uber {
 		y:            y,
 		movements:    0,
 		currentIndex: 0,
-		pathtoObj:    []rune(""), // Yup here is the STRING iterable of go c: ...
+		pathtoObj:    make([]byte, 0), // Yup here is the STRING iterable of go c: ...
 		world:        world,
 		possibles:    possibles,
 		client:       nil,
@@ -68,7 +69,7 @@ func createUber(id, x, y int, world *world) Uber {
 					path += "E"
 				}
 			}
-			uber.pathtoObj = []rune(path)
+			uber.pathtoObj = []byte(path)
 			uber.currentIndex = 0
 		},
 		makeMove: func(uber *Uber) bool {
@@ -82,7 +83,7 @@ func createUber(id, x, y int, world *world) Uber {
 			} else if uber.x == uber.client.objX && uber.y == uber.client.objY && !uber.client.done { // Done
 				uber.client.done = true
 				uber.client = nil
-				uber.pathtoObj = []rune("") // empty
+				uber.pathtoObj = make([]byte, 0) // empty
 				uber.currentIndex = 0
 				uber.avalaible = true
 				return false

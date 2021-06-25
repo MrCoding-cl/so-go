@@ -5,29 +5,30 @@ import (
 	"sync"
 )
 
-type worldFilterWaitingClients func(world2 *world)
-type worldAddClient func(world2 *world, client2 *client)
-type worldclientstowaitinglist func(world2 *world)
-type worlduberforclient func(world2 *world, client2 *client, ubers *[]*Uber) bool
-type worldGetAvalaibleUbers func(world2 *world) []*Uber
-type worldRunWithoutPram func(world2 *world)
-type worldRunWithPram func(world2 *world)
-type worldRunWithPramTwoProcess func(world2 *world)
-
-type world struct {
-	maxX, maxY, time, ubertraveled int
-	ubers                          []*Uber // ah... Pointers, Sweet XD
-	clients                        map[int][]*client
-	waitingclients                 []*client
-	filterWaitingClients           worldFilterWaitingClients
-	addClient                      worldAddClient
-	clientsToWaitingList           worldclientstowaitinglist
-	uberForClient                  worlduberforclient
-	getAvalaibleUbers              worldGetAvalaibleUbers
-	runwWithoutPram                worldRunWithoutPram
-	runWithPram                    worldRunWithPram
-	runWithPram2Process            worldRunWithPramTwoProcess
-}
+type (
+	world struct {
+		maxX, maxY, time, ubertraveled int
+		ubers                          []*Uber // ah... Pointers, Sweet XD
+		clients                        map[int][]*client
+		waitingclients                 []*client
+		filterWaitingClients           worldFilterWaitingClients
+		addClient                      worldAddClient
+		clientsToWaitingList           worldclientstowaitinglist
+		uberForClient                  worlduberforclient
+		getAvalaibleUbers              worldGetAvalaibleUbers
+		runwWithoutPram                worldRunWithoutPram
+		runWithPram                    worldRunWithPram
+		runWithPram2Process            worldRunWithPramTwoProcess
+	}
+	worldFilterWaitingClients  func(world2 *world)
+	worldAddClient             func(world2 *world, client2 *client)
+	worldclientstowaitinglist  func(world2 *world)
+	worlduberforclient         func(world2 *world, client2 *client, ubers *[]*Uber) bool
+	worldGetAvalaibleUbers     func(world2 *world) []*Uber
+	worldRunWithoutPram        func(world2 *world)
+	worldRunWithPram           func(world2 *world)
+	worldRunWithPramTwoProcess func(world2 *world)
+)
 
 func createWorld() world {
 	return world{
