@@ -3,31 +3,29 @@ package main
 import (
 	"github.com/gofiber/websocket/v2"
 	"log"
-	"net/http"
-	"strconv"
 	"sync"
 	"time"
 )
 
 type (
 	world struct {
-		maxX, maxY, time, Ubertraveled int
-		ubers                          []*Uber // ah... Pointers, Sweet XD
-		clients                        map[int][]*passenger
-		waitingclients                 []*passenger
-		filterWaitingClients           worldFilterWaitingClients
-		addClient                      worldAddClient
-		clientsToWaitingList           worldclientstowaitinglist
-		uberForClient                  worlduberforclient
-		getAvalaibleUbers              worldGetAvalaibleUbers
-		runwWithoutPram                worldRunWithoutPram
-		runWithPram                    worldRunWithPram
-		runWithPram2Process            worldRunWithPramTwoProcess
-		socket                         *websocket.Conn
-		X                              []int  `json:"x"` // For parse to a JSON :)
-		Y                              []int  `json:"y"`
-		Runtime                        string `json:"runtime"`
-		instantSave                    worldInstantSave
+		maxX, maxY, time, maxTime, Ubertraveled int
+		ubers                                   []*Uber // ah... Pointers, Sweet XD
+		clients                                 map[int][]*passenger
+		waitingclients                          []*passenger
+		filterWaitingClients                    worldFilterWaitingClients
+		addClient                               worldAddClient
+		clientsToWaitingList                    worldclientstowaitinglist
+		uberForClient                           worlduberforclient
+		getAvalaibleUbers                       worldGetAvalaibleUbers
+		runwWithoutPram                         worldRunWithoutPram
+		runWithPram                             worldRunWithPram
+		runWithPram2Process                     worldRunWithPramTwoProcess
+		socket                                  *websocket.Conn
+		X                                       []int  `json:"x"` // For parse to a JSON :)
+		Y                                       []int  `json:"y"`
+		Runtime                                 string `json:"runtime"`
+		instantSave                             worldInstantSave
 	}
 	worldFilterWaitingClients  func(world2 *world)
 	worldAddClient             func(world2 *world, client2 *passenger)
@@ -40,18 +38,19 @@ type (
 	worldInstantSave           func(world2 *world)
 )
 
-func createWorld() *world {
+func createWorld(maxTime int) *world {
 	w := world{
 		socket:         nil, // nil for the moment.
 		maxX:           1000,
 		maxY:           1000,
 		time:           0,
+		maxTime:        maxTime,
 		Ubertraveled:   0,
 		ubers:          make([]*Uber, 0),
 		clients:        make(map[int][]*passenger),
 		waitingclients: make([]*passenger, 0),
-		X:              make([]int, 0),
-		Y:              make([]int, 0),
+		X:              make([]int, maxTime),
+		Y:              make([]int, maxTime),
 		filterWaitingClients: func(world2 *world) {
 			oldlist := world2.waitingclients
 			newlist := make([]*passenger, 0)
@@ -103,7 +102,7 @@ func createWorld() *world {
 		},
 		runwWithoutPram: func(world2 *world) {
 			start := time.Now()
-			for world2.time < 12000 {
+			for world2.time < world2.maxTime {
 				world2.filterWaitingClients(world2)
 				world2.clientsToWaitingList(world2)
 				for _, client := range world2.waitingclients {
@@ -127,7 +126,7 @@ func createWorld() *world {
 		},
 		runWithPram: func(world2 *world) {
 			start := time.Now()
-			for world2.time < 12000 {
+			for world2.time < world2.maxTime {
 				world2.filterWaitingClients(world2)
 				world2.clientsToWaitingList(world2)
 				var wg = new(sync.WaitGroup)
@@ -165,7 +164,7 @@ func createWorld() *world {
 		},
 		runWithPram2Process: func(world2 *world) {
 			start := time.Now()
-			for world2.time < 12000 {
+			for world2.time < world2.maxTime {
 				var wg = new(sync.WaitGroup)
 				wg.Add(2)
 				go func() {
@@ -198,10 +197,19 @@ func createWorld() *world {
 		},
 		instantSave: func(world2 *world) {
 			if world2.socket != nil {
-				_ = world2.socket.WriteMessage(http.StatusOK, []byte(strconv.Itoa(world2.time)+" "+strconv.Itoa(world2.Ubertraveled)))
+				_ = world2.socket.WriteJSON(struct {
+					X int `json:"x"`
+					Y int `json:"y"`
+				}{
+					X: world2.time,
+					Y: world2.Ubertraveled,
+				})
+				//_ = world2.socket.WriteMessage(1, []byte(strconv.Itoa(world2.time)+" "+strconv.Itoa(world2.Ubertraveled)))
 			}
-			world2.X = append(world2.X, world2.time)
-			world2.Y = append(world2.Y, world2.Ubertraveled)
+			world2.X[world2.time-1] = world2.time
+			world2.Y[world2.time-1] = world2.Ubertraveled
+			//world2.X = append(world2.X, world2.time)
+			//world2.Y = append(world2.Y, world2.Ubertraveled)
 		},
 	}
 	return &w

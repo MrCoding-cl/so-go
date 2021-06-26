@@ -1,0 +1,22 @@
+GET http://localhost:3000/result/1
+
+###
+POST http://localhost:3000/config/1
+Content-Type: application/json
+
+{
+  "run_type": 0,
+  "pram": false,
+  "ubers": "",
+  "request": ""
+}
+
+###
+GET http://localhost:3000/config/1
+Accept: application/json
+
+###
+GET http://localhost:3000/id
+Accept: application/json
+
+###

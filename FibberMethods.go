@@ -44,7 +44,7 @@ func Socket(c *websocket.Conn) {
 		}
 		str := string(msg)
 		if str == "start" {
-			client.World = createWorld()
+			client.World = createWorld(12000)
 			client.World.socket = c
 			switch client.Config.RunType {
 			case 0:
