@@ -1,34 +1,23 @@
 package main
 
 import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"log"
-	"time"
 )
 
+var server = createServer()
+
 func main() {
-	world := createWorld()
-	addClientsToWorld(&world, "data\\requests_1.dat")
-	addUbersToWorld(&world, "data\\manana.dat")
-	start := time.Now()
-	world.runwWithoutPram(&world)
-	//world.runWithPram(&world)
-	//world.runWithPram2Process(&world)
-	end := time.Now()
-	log.Println("MonoThread process")
-	log.Println("Started Time:", start)
-	log.Println("End Time:", end)
-	log.Println("Total Time:", end.Sub(start))
-	time.Sleep(5 * time.Second)
-	start = time.Now()
-	world = createWorld()
-	addClientsToWorld(&world, "data\\requests_1.dat")
-	addUbersToWorld(&world, "data\\manana.dat")
-	//world.runwWithoutPram(&world)
-	world.runWithPram(&world)
-	//world.runWithPram2Process(&world)
-	end = time.Now()
-	log.Println("MultiThread process")
-	log.Println("Started Time:", start)
-	log.Println("End Time:", end)
-	log.Println("Total Time:", end.Sub(start))
+	app := fiber.New()
+	app.Use("/ws", FibberMiddleware)
+	app.Get("/ws/:id", websocket.New(Socket))
+	app.Get("/id", FiberIdGET)
+	app.Get("/config/:id", FiberConfigGET)
+	app.Post("/config/:id", FiberConfigPOST)
+	app.Get("/result/:id", FiberResultGET)
+
+	log.Fatal(app.Listen(":3000"))
+	// Access the websocket server: ws://localhost:3000/ws/123?v=1.0
+	// https://www.websocket.org/echo.html
 }

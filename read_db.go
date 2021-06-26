@@ -135,7 +135,7 @@ func readDataTime(path string) []coordenadas {
 func addClientsToWorld(world *world, path string) {
 	request := readDataRequest(path)
 	for id, r := range request {
-		client := createClient(id, r.xi, r.yi, r.xf, r.yf, r.t, world)
+		client := createUberPassenger(id, r.xi, r.yi, r.xf, r.yf, r.t, world)
 		world.addClient(world, &client)
 	}
 }
