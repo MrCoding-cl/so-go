@@ -25,8 +25,8 @@ func createServer() Server {
 				Config: Configurations{
 					RunType: 3,
 					Pram:    false,
-					Ubers:   "",
-					Request: "",
+					Ubers:   make([]UberFormat, 1),
+					Request: make([]RequestFormat, 1),
 				},
 			}
 			server2.clients[id] = &newClient

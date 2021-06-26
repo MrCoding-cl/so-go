@@ -17,7 +17,7 @@ func main() {
 	app.Post("/config/:id", FiberConfigPOST)
 	app.Get("/result/:id", FiberResultGET)
 
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":8080"))
 	// Access the websocket server: ws://localhost:3000/ws/123?v=1.0
 	// https://www.websocket.org/echo.html
 }

@@ -7,31 +7,18 @@ import (
 	"strings"
 )
 
-type coordenadas struct {
-	x int
-	y int
-}
-
-type request struct {
-	xi int
-	yi int
-	xf int
-	yf int
-	t  int
-}
-
-func anadir(x int, y int) coordenadas {
-	p := coordenadas{x: x, y: y}
+func anadir(x int, y int) UberFormat {
+	p := UberFormat{X: x, Y: y}
 	return p
 }
 
-func anadirRequest(xi int, yi int, xf int, yf int, t int) request {
-	p := request{xi: xi, yi: yi, xf: xf, yf: yf, t: t}
+func anadirRequest(xi int, yi int, xf int, yf int, t int) RequestFormat {
+	p := RequestFormat{Xi: xi, Yi: yi, Xf: xf, Yf: yf, T: t}
 	return p
 }
 
-func readData(file *os.File, reader *bufio.Reader) []coordenadas {
-	var arrayCoordenadas []coordenadas
+func readData(file *os.File, reader *bufio.Reader) []UberFormat {
+	var arrayCoordenadas []UberFormat
 	for {
 		line, _, err := reader.ReadLine()
 		if err != nil || len(line) == 0 {
@@ -83,8 +70,8 @@ func auxiliar(numero string) string {
 	return ultimo
 }
 
-func readRequest(file *os.File, reader *bufio.Reader) []request {
-	var arrayRequest []request
+func readRequest(file *os.File, reader *bufio.Reader) []RequestFormat {
+	var arrayRequest []RequestFormat
 	for {
 		line, _, err := reader.ReadLine()
 		if err != nil || len(line) == 0 {
@@ -115,7 +102,7 @@ func readRequest(file *os.File, reader *bufio.Reader) []request {
 
 }
 
-func readDataRequest(path string) []request {
+func readDataRequest(path string) []RequestFormat {
 	content, _ := os.Open(path)
 	reader := bufio.NewReader(content)
 	lines := readRequest(content, reader)
@@ -124,7 +111,7 @@ func readDataRequest(path string) []request {
 
 }
 
-func readDataTime(path string) []coordenadas {
+func readDataTime(path string) []UberFormat {
 	//This is the function you are going to use to read the data at night, mo0rning, afternoon, etc...
 	content, _ := os.Open(path)
 	reader := bufio.NewReader(content)
@@ -135,14 +122,14 @@ func readDataTime(path string) []coordenadas {
 func addClientsToWorld(world *world, path string) {
 	request := readDataRequest(path)
 	for id, r := range request {
-		client := createUberPassenger(id, r.xi, r.yi, r.xf, r.yf, r.t, world)
+		client := createUberPassenger(id, r.Xi, r.Yi, r.Xf, r.Yf, r.T, world)
 		world.addClient(world, &client)
 	}
 }
 func addUbersToWorld(world *world, path string) {
 	request := readDataTime(path)
 	for id, r := range request {
-		uber := createUber(id, r.x, r.y, world)
+		uber := createUber(id, r.X, r.Y, world)
 		world.ubers = append(world.ubers, &uber)
 	}
 }
