@@ -95,3 +95,19 @@ func randomRoutine(world *world) {
 		world.ubers = append(world.ubers, &uber)
 	}
 }
+func CustomRoutine(world *world, client *Client) error {
+	config := &client.Config
+	for i, uber := range config.Ubers {
+		ub := createUber(i, uber.X, uber.Y, world)
+		world.ubers = append(world.ubers, &ub)
+	}
+	for i, passenger := range config.Request {
+		pass := createUberPassenger(i, passenger.Xi, passenger.Yi, passenger.Xf, passenger.Yf, passenger.T, world)
+		world.addClient(world, &pass)
+	}
+	var err error
+	if len(world.clients) == 0 || len(world.ubers) == 0 {
+		err = errors.New("Clients or ubers doesn't exist")
+	}
+	return err
+}

@@ -91,7 +91,11 @@ func createWorld(maxTime int) *world {
 			}
 			probs := make(map[*Uber]float64)
 			for _, uber := range *ubers {
-				probs[uber] = DistanceBetween(client2, uber) / total
+				if total == 0 {
+					probs[uber] = 1
+				} else {
+					probs[uber] = DistanceBetween(client2, uber) / total
+				}
 			}
 			uber := selectConditionedUber(probs)
 			//if !uber.setClient(uber, client2) {

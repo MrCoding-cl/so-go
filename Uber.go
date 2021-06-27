@@ -22,16 +22,25 @@ type (
 )
 
 func createUber(id, x, y int, world *world) Uber {
-	possibles := make(map[string]struct{ x, y int })
-	possibles["S"] = struct{ x, y int }{x: 0, y: -1}
-	possibles["N"] = struct{ x, y int }{x: 0, y: 1}
-	possibles["E"] = struct{ x, y int }{x: 1, y: 0}
-	possibles["W"] = struct{ x, y int }{x: -1, y: 0}
+	coordX := x
+	coordY := y
+	switch {
+	case coordX > world.maxX:
+		coordX = world.maxX
+	case coordX < 0:
+		coordX = 0
+	}
+	switch {
+	case coordY > world.maxY:
+		coordY = world.maxY
+	case coordY < 0:
+		coordY = 0
+	}
 	return Uber{
 		id:               id,
 		avalaible:        true,
-		x:                x,
-		y:                y,
+		x:                coordX,
+		y:                coordY,
 		movements:        0,
 		MovementsToReach: 0,
 		world:            world,
@@ -41,6 +50,7 @@ func createUber(id, x, y int, world *world) Uber {
 			uber.y += deltay
 			uber.movements += 1
 			uber.world.Ubertraveled += 1
+			uber.MovementsToReach += 1
 		},
 		getCoord: func(uber *Uber) (int, int) {
 			return uber.x, uber.y
@@ -50,14 +60,13 @@ func createUber(id, x, y int, world *world) Uber {
 			ly := deltay
 			if uber.y > ly {
 				uber.move(uber, 0, -1)
-			} else if y < ly {
+			} else if uber.y < ly {
 				uber.move(uber, 0, 1)
-			} else if x > lx {
+			} else if uber.x > lx {
 				uber.move(uber, -1, 0)
-			} else if x < lx {
+			} else if uber.x < lx {
 				uber.move(uber, 1, 0)
 			}
-			uber.MovementsToReach += 1
 		},
 		makeMove: func(uber *Uber) bool {
 			if uber.client == nil || uber.avalaible {

@@ -50,23 +50,29 @@ func Socket(c *websocket.Conn) {
 			case 0:
 				err := morningRoutine(client.World)
 				if err != nil {
-					_ = c.WriteMessage(http.StatusInternalServerError, []byte("Something is bad"))
+					_ = c.WriteMessage(http.StatusInternalServerError, []byte(err.Error()))
 					return
 				}
 			case 1:
 				err := afternoonRoutine(client.World)
 				if err != nil {
-					_ = c.WriteMessage(http.StatusInternalServerError, []byte("Something is bad"))
+					_ = c.WriteMessage(http.StatusInternalServerError, []byte(err.Error()))
 					return
 				}
 			case 2:
 				err := nightRoutine(client.World)
 				if err != nil {
-					_ = c.WriteMessage(http.StatusInternalServerError, []byte("Something is bad"))
+					_ = c.WriteMessage(http.StatusInternalServerError, []byte(err.Error()))
 					return
 				}
 			case 3:
 				randomRoutine(client.World)
+			case 4:
+				err := CustomRoutine(client.World, client)
+				if err != nil {
+					_ = c.WriteMessage(http.StatusInternalServerError, []byte(err.Error()))
+					return
+				}
 			default:
 				_ = c.WriteMessage(http.StatusNotAcceptable, []byte("Not Implemented Yet or something is wrong"))
 				return
@@ -77,12 +83,6 @@ func Socket(c *websocket.Conn) {
 				client.World.runwWithoutPram(client.World)
 			}
 		}
-		//log.Printf("recv: %s", msg)
-		//
-		//if err = c.WriteMessage(mt, msg); err != nil {
-		//	log.Println("write:", err)
-		//	break
-		//}
 	}
 
 }
