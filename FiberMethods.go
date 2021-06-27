@@ -18,11 +18,6 @@ func FiberMiddleware(c *fiber.Ctx) error {
 	return fiber.ErrUpgradeRequired
 }
 func FiberSocket(c *websocket.Conn) {
-	// c.Locals is added to the *websocket.Conn
-	//log.Println(c.Locals("allowed"))  // true
-	//log.Println(c.Params("id"))       // 123
-	//log.Println(c.Query("v"))         // 1.0
-	//log.Println(c.Cookies("session")) // ""
 	// websocket.Conn bindings https://pkg.go.dev/github.com/fasthttp/websocket?tab=doc#pkg-index
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {

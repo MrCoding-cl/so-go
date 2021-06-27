@@ -1,5 +1,7 @@
 package main
 
+var server = createServer()
+
 type ServeraddClient func(server2 *Server) int
 
 type Server struct {
@@ -21,7 +23,7 @@ func createServer() Server {
 			}
 			newClient := Client{
 				Id:    id,
-				World: nil, // Is going to be setted when the socket get the word 'start'
+				World: nil, // Is going to be set when the socket get the word 'start'
 				Config: Configurations{
 					RunType: 3,
 					Pram:    false,
