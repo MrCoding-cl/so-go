@@ -10,8 +10,8 @@ var server = createServer()
 
 func main() {
 	app := fiber.New()
-	app.Use("/ws", FibberMiddleware)
-	app.Get("/ws/:id", websocket.New(Socket))
+	app.Use("/ws", FiberMiddleware)
+	app.Get("/ws/:id", websocket.New(FiberSocket))
 	app.Get("/id", FiberIdGET)
 	app.Get("/config/:id", FiberConfigGET)
 	app.Post("/config/:id", FiberConfigPOST)

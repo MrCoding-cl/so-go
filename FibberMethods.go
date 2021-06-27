@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func FibberMiddleware(c *fiber.Ctx) error {
+func FiberMiddleware(c *fiber.Ctx) error {
 	// IsWebSocketUpgrade returns true if the passenger
 	// requested upgrade to the WebSocket protocol.
 	if websocket.IsWebSocketUpgrade(c) {
@@ -17,7 +17,7 @@ func FibberMiddleware(c *fiber.Ctx) error {
 	}
 	return fiber.ErrUpgradeRequired
 }
-func Socket(c *websocket.Conn) {
+func FiberSocket(c *websocket.Conn) {
 	// c.Locals is added to the *websocket.Conn
 	//log.Println(c.Locals("allowed"))  // true
 	//log.Println(c.Params("id"))       // 123
