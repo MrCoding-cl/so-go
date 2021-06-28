@@ -111,3 +111,39 @@ func CustomRoutine(world *world, client *Client) error {
 	}
 	return err
 }
+
+func getRoutine(client *Client) error {
+	client.World = createWorld(12000)
+	switch client.Config.RunType {
+	case 0:
+		err := morningRoutine(client.World)
+		if err != nil {
+			return err
+		}
+	case 1:
+		err := afternoonRoutine(client.World)
+		if err != nil {
+			return err
+		}
+	case 2:
+		err := nightRoutine(client.World)
+		if err != nil {
+			return err
+		}
+	case 3:
+		randomRoutine(client.World)
+	case 4:
+		err := CustomRoutine(client.World, client)
+		if err != nil {
+			return err
+		}
+	default:
+		return errors.New("RunType Not Found")
+	}
+	if client.Config.Pram {
+		client.World.runWithPram(client.World)
+	} else {
+		client.World.runwWithoutPram(client.World)
+	}
+	return nil
+}

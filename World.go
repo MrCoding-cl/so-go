@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gofiber/websocket/v2"
 	"log"
 	"sync"
 	"time"
@@ -21,11 +20,10 @@ type (
 		runwWithoutPram                         worldRunWithoutPram
 		runWithPram                             worldRunWithPram
 		runWithPram2Process                     worldRunWithPramTwoProcess
-		socket                                  *websocket.Conn
-		//X                                       []int  `json:"x"` // For parse to a JSON :)
-		Y           []int  `json:"y"`
-		Runtime     string `json:"runtime"`
-		instantSave worldInstantSave
+		X                                       []int  `json:"x"` // For parse to a JSON :)
+		Y                                       []int  `json:"y"`
+		Runtime                                 string `json:"runtime"`
+		instantSave                             worldInstantSave
 	}
 	worldFilterWaitingClients  func(world2 *world)
 	worldAddClient             func(world2 *world, client2 *passenger)
@@ -40,7 +38,6 @@ type (
 
 func createWorld(maxTime int) *world {
 	w := world{
-		socket:         nil, // nil for the moment.
 		maxX:           1000,
 		maxY:           1000,
 		time:           0,
@@ -49,8 +46,8 @@ func createWorld(maxTime int) *world {
 		ubers:          make([]*Uber, 0),
 		clients:        make(map[int][]*passenger),
 		waitingclients: make([]*passenger, 0),
-		//X:              make([]int, maxTime),
-		Y: make([]int, maxTime),
+		X:              make([]int, maxTime),
+		Y:              make([]int, maxTime),
 		filterWaitingClients: func(world2 *world) {
 			oldlist := world2.waitingclients
 			newlist := make([]*passenger, 0)
@@ -200,17 +197,7 @@ func createWorld(maxTime int) *world {
 			world2.Runtime = end.Sub(start).String()
 		},
 		instantSave: func(world2 *world) {
-			if world2.socket != nil {
-				_ = world2.socket.WriteJSON(struct {
-					//X int `json:"x"`
-					Y int `json:"y"`
-				}{
-					//X: world2.time,
-					Y: world2.Ubertraveled,
-				})
-				//_ = world2.socket.WriteMessage(1, []byte(strconv.Itoa(world2.time)+" "+strconv.Itoa(world2.Ubertraveled)))
-			}
-			//world2.X[world2.time-1] = world2.time
+			world2.X[world2.time-1] = world2.time
 			world2.Y[world2.time-1] = world2.Ubertraveled
 			//world2.X = append(world2.X, world2.time)
 			//world2.Y = append(world2.Y, world2.Ubertraveled)
