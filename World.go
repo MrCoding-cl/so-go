@@ -19,7 +19,6 @@ type (
 		getAvalaibleUbers                       worldGetAvalaibleUbers
 		runwWithoutPram                         worldRunWithoutPram
 		runWithPram                             worldRunWithPram
-		runWithPram2Process                     worldRunWithPramTwoProcess
 		X                                       []int  `json:"x"` // For parse to a JSON :)
 		Y                                       []int  `json:"y"`
 		Runtime                                 string `json:"runtime"`
@@ -27,15 +26,14 @@ type (
 		log                                     string
 		end                                     bool
 	}
-	worldFilterWaitingClients  func(world2 *world)
-	worldAddClient             func(world2 *world, client2 *passenger)
-	worldclientstowaitinglist  func(world2 *world)
-	worlduberforclient         func(world2 *world, client2 *passenger, ubers *[]*Uber) bool
-	worldGetAvalaibleUbers     func(world2 *world) []*Uber
-	worldRunWithoutPram        func(world2 *world)
-	worldRunWithPram           func(world2 *world)
-	worldRunWithPramTwoProcess func(world2 *world)
-	worldInstantSave           func(world2 *world)
+	worldFilterWaitingClients func(world2 *world)
+	worldAddClient            func(world2 *world, client2 *passenger)
+	worldclientstowaitinglist func(world2 *world)
+	worlduberforclient        func(world2 *world, client2 *passenger, ubers *[]*Uber) bool
+	worldGetAvalaibleUbers    func(world2 *world) []*Uber
+	worldRunWithoutPram       func(world2 *world)
+	worldRunWithPram          func(world2 *world)
+	worldInstantSave          func(world2 *world)
 )
 
 func createWorld(maxTime int) *world {
@@ -157,39 +155,6 @@ func createWorld(maxTime int) *world {
 					}(uber)
 					//uber.makeMove(uber)
 				}
-				wg.Wait()
-				world2.time += 1
-				world2.instantSave(world2)
-				//log.Println(world2.time, world2.Ubertraveled)
-			}
-			end := time.Now()
-			world2.Runtime = end.Sub(start).String()
-		},
-		runWithPram2Process: func(world2 *world) {
-			start := time.Now()
-			for world2.time < world2.maxTime {
-				var wg = new(sync.WaitGroup)
-				wg.Add(2)
-				go func() {
-					defer wg.Done()
-					world2.filterWaitingClients(world2)
-					world2.clientsToWaitingList(world2)
-					for _, client := range world2.waitingclients {
-						ubers := world2.getAvalaibleUbers(world2)
-						if len(ubers) == 0 {
-							break
-						}
-						if !world2.uberForClient(world2, client, &ubers) {
-							break // Because there's no more ubers avalaible
-						}
-					}
-				}()
-				go func() {
-					defer wg.Done()
-					for _, uber := range world2.ubers {
-						uber.makeMove(uber)
-					}
-				}()
 				wg.Wait()
 				world2.time += 1
 				world2.instantSave(world2)

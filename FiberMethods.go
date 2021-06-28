@@ -2,20 +2,10 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/websocket/v2"
 	"net/http"
 	"strconv"
 )
 
-func FiberMiddleware(c *fiber.Ctx) error {
-	// IsWebSocketUpgrade returns true if the passenger
-	// requested upgrade to the WebSocket protocol.
-	if websocket.IsWebSocketUpgrade(c) {
-		c.Locals("allowed", true)
-		return c.Next()
-	}
-	return fiber.ErrUpgradeRequired
-}
 func FiberIdGET(c *fiber.Ctx) error {
 	return c.SendString(strconv.Itoa(server.add_client(&server)))
 }
