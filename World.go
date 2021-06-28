@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -24,6 +24,8 @@ type (
 		Y                                       []int  `json:"y"`
 		Runtime                                 string `json:"runtime"`
 		instantSave                             worldInstantSave
+		log                                     string
+		end                                     bool
 	}
 	worldFilterWaitingClients  func(world2 *world)
 	worldAddClient             func(world2 *world, client2 *passenger)
@@ -120,7 +122,7 @@ func createWorld(maxTime int) *world {
 				}
 				world2.time += 1
 				world2.instantSave(world2)
-				log.Println(world2.time, world2.Ubertraveled)
+				//log.Println(world2.time, world2.Ubertraveled)
 			}
 			end := time.Now()
 			world2.Runtime = end.Sub(start).String()
@@ -158,7 +160,7 @@ func createWorld(maxTime int) *world {
 				wg.Wait()
 				world2.time += 1
 				world2.instantSave(world2)
-				log.Println(world2.time, world2.Ubertraveled)
+				//log.Println(world2.time, world2.Ubertraveled)
 			}
 			end := time.Now()
 			world2.Runtime = end.Sub(start).String()
@@ -191,14 +193,18 @@ func createWorld(maxTime int) *world {
 				wg.Wait()
 				world2.time += 1
 				world2.instantSave(world2)
-				log.Println(world2.time, world2.Ubertraveled)
+				//log.Println(world2.time, world2.Ubertraveled)
 			}
 			end := time.Now()
 			world2.Runtime = end.Sub(start).String()
 		},
 		instantSave: func(world2 *world) {
+			world2.log += strconv.Itoa(world2.time) + " " + strconv.Itoa(world2.Ubertraveled) + "\n"
 			world2.X[world2.time-1] = world2.time
 			world2.Y[world2.time-1] = world2.Ubertraveled
+			if world2.time == 12000 {
+				world2.end = true
+			}
 			//world2.X = append(world2.X, world2.time)
 			//world2.Y = append(world2.Y, world2.Ubertraveled)
 		},

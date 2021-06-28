@@ -65,3 +65,25 @@ func FiberResultGET(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusNotFound)
 	}
 }
+func FiberLogGET(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.SendStatus(http.StatusUnprocessableEntity)
+	}
+	client, ok := server.clients[id]
+	if ok {
+		if client.World == nil {
+			return c.SendStatus(http.StatusInternalServerError)
+		}
+		if !client.World.end {
+			return c.SendStatus(http.StatusNotAcceptable)
+		}
+		return c.JSON(struct {
+			Log string `json:"log"`
+		}{
+			Log: client.World.log,
+		})
+	} else {
+		return c.SendStatus(http.StatusNotFound)
+	}
+}

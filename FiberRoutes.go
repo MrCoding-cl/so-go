@@ -12,5 +12,6 @@ func FiberRoutes() {
 	app.Get("/config/:id", FiberConfigGET)
 	app.Post("/config/:id", FiberConfigPOST)
 	app.Get("/result/:id", FiberResultGET)
+	app.Get("/log/:id", FiberLogGET)
 	log.Fatal(app.Listen(":8080"))
 }

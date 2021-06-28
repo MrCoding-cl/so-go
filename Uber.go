@@ -1,7 +1,5 @@
 package main
 
-import "log"
-
 type (
 	uberMoveType          func(uber *Uber, deltax, deltay int)
 	ubergetCoord          func(uber *Uber) (int, int)
@@ -74,16 +72,16 @@ func createUber(id, x, y int, world *world) Uber {
 			}
 			if uber.client.x == uber.x && uber.client.y == uber.y && !uber.client.picked {
 				uber.client.picked = true
-				log.Println("Uber", uber.id, "Picked passenger in", uber.MovementsToReach, "Movements")
+				//log.Println("Uber", uber.id, "Picked passenger in", uber.MovementsToReach, "Movements")
 				uber.MovementsToReach = 0
 			} else if uber.x == uber.client.objX && uber.y == uber.client.objY && !uber.client.done && uber.client.picked { // Done
-				log.Println("Uber", uber.id, "DONE in", uber.MovementsToReach, "Its ok?")
-				if DistanceBetweenPoints(uber.client.x, uber.client.y, uber.client.objX, uber.client.objY) == uber.MovementsToReach {
-					log.Println("YUP")
-				} else {
-					realmovements := DistanceBetweenPoints(uber.client.x, uber.client.y, uber.client.objX, uber.client.objY)
-					log.Println("NOPE MAX Movement are:", realmovements)
-				}
+				//log.Println("Uber", uber.id, "DONE in", uber.MovementsToReach, "Its ok?")
+				//if DistanceBetweenPoints(uber.client.x, uber.client.y, uber.client.objX, uber.client.objY) == uber.MovementsToReach {
+				//	log.Println("YUP")
+				//} else {
+				//	realmovements := DistanceBetweenPoints(uber.client.x, uber.client.y, uber.client.objX, uber.client.objY)
+				//	log.Println("NOPE MAX Movement are:", realmovements)
+				//}
 				uber.client.done = true
 				uber.client = nil
 				uber.MovementsToReach = 0
