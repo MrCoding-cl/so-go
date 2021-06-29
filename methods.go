@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math"
 	"math/rand"
-	"sort"
 	"time"
 )
 
@@ -18,24 +17,13 @@ func selectConditionedUber(ubers map[*Uber]float64) *Uber {
 		thus achieving uniformity and maintaining the rule of the probability difference between each of the elements.
 	*/
 	rand.Seed(time.Now().Unix())
-	keys := make([]*Uber, 0)
-	for key := range ubers {
-		if ubers[key] > 0.0 {
-			keys = append(keys, key)
-		}
-	}
-	sort.Slice(keys, func(i, j int) bool { return ubers[keys[i]] > ubers[keys[j]] })
 	acum := 0.0
-	for _, key := range keys {
-		ubers[key] += acum
-		acum = ubers[key]
-	}
 	var uberWon *Uber = nil
 	for uberWon == nil {
 		winnerprob := rand.Float64()
-		for _, key := range keys {
-			uberprob := ubers[key]
-			if winnerprob <= uberprob {
+		for key, prob := range ubers {
+			acum += prob
+			if winnerprob <= acum {
 				uberWon = key
 				break
 			}

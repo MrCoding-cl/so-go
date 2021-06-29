@@ -19,9 +19,9 @@ type (
 		getAvalaibleUbers                       worldGetAvalaibleUbers
 		runwWithoutPram                         worldRunWithoutPram
 		runWithPram                             worldRunWithPram
+		Runtime                                 string `json:"runtime"`
 		X                                       []int  `json:"x"` // For parse to a JSON :)
 		Y                                       []int  `json:"y"`
-		Runtime                                 string `json:"runtime"`
 		instantSave                             worldInstantSave
 		log                                     string
 		end                                     bool
