@@ -4,15 +4,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
+	"os"
 )
 
 var app = fiber.New()
 
 func FiberRoutes() {
 	// Default config
-	app.Use(cors.New())
-
-	// Or extend your config for customization
 	app.Use(cors.New(cors.Config{
 		Next:             nil,
 		AllowOrigins:     "*",
@@ -27,5 +25,9 @@ func FiberRoutes() {
 	app.Post("/config/:id", FiberConfigPOST)
 	app.Get("/result/:id", FiberResultGET)
 	app.Get("/log/:id", FiberLogGET)
-	log.Fatal(app.Listen(":8080"))
+	port, ok := os.LookupEnv("PORT") // For Heroku or Elastic
+	if !ok {
+		port = "8080"
+	}
+	log.Fatal(app.Listen(":" + port))
 }

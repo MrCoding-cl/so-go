@@ -44,12 +44,6 @@ func DistanceBetween(client2 *passenger, uber *Uber) float64 {
 	return deltaY + deltaX
 }
 
-func DistanceBetweenPoints(x1, y1, x2, y2 int) int {
-	deltaX := math.Abs(float64(x1 - x2))
-	deltaY := math.Abs(float64(y1 - y2))
-	return int(deltaY + deltaX)
-}
-
 func fileRoutine(world *world, requestPath string, TimePath string) error {
 	addClientsToWorld(world, requestPath)
 	addUbersToWorld(world, TimePath)

@@ -119,7 +119,7 @@ func createWorld(maxTime int) *world {
 					if uber.avalaible {
 						continue
 					}
-					uber.makeMove(uber)
+					uber.checkMove(uber)
 				}
 				world2.time += 1
 				world2.instantSave(world2)
@@ -140,23 +140,23 @@ func createWorld(maxTime int) *world {
 						break
 					}
 					wg.Add(1)
-					client := client
-					go func() {
+					go func(client *passenger, ubers []*Uber) {
 						defer wg.Done()
-						world2.uberForClient(world2, client, &ubers)
-					}()
+						if !world2.uberForClient(world2, client, &ubers) {
+							return // Because there's no more ubers avalaible
+						}
+					}(client, ubers)
 				}
 				wg.Wait()
 				for _, uber := range world2.ubers {
-					if uber.client == nil {
+					if uber.avalaible {
 						continue
 					}
 					wg.Add(1)
 					go func(uber *Uber) {
 						defer wg.Done()
-						uber.makeMove(uber)
+						uber.checkMove(uber)
 					}(uber)
-					//uber.makeMove(uber)
 				}
 				wg.Wait()
 				world2.time += 1
