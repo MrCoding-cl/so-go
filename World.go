@@ -116,6 +116,9 @@ func createWorld(maxTime int) *world {
 					}
 				}
 				for _, uber := range world2.ubers {
+					if uber.avalaible {
+						continue
+					}
 					uber.makeMove(uber)
 				}
 				world2.time += 1
