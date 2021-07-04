@@ -12,6 +12,11 @@ type (
 		ubers                                   []*Uber // ah... Pointers, Sweet XD
 		clients                                 map[int][]*passenger
 		waitingclients                          []*passenger
+		Runtime                                 string `json:"runtime"`
+		X                                       []int  `json:"x"` // For parse to a JSON :)
+		Y                                       []int  `json:"y"`
+		log                                     string
+		end                                     bool
 		filterWaitingClients                    worldFilterWaitingClients
 		addClient                               worldAddClient
 		clientsToWaitingList                    worldclientstowaitinglist
@@ -19,12 +24,7 @@ type (
 		getAvalaibleUbers                       worldGetAvalaibleUbers
 		runwWithoutPram                         worldRunWithoutPram
 		runWithPram                             worldRunWithPram
-		Runtime                                 string `json:"runtime"`
-		X                                       []int  `json:"x"` // For parse to a JSON :)
-		Y                                       []int  `json:"y"`
 		instantSave                             worldInstantSave
-		log                                     string
-		end                                     bool
 	}
 	worldFilterWaitingClients func(world2 *world)
 	worldAddClient            func(world2 *world, client2 *passenger)
@@ -79,7 +79,6 @@ func createWorld(maxTime int) *world {
 		},
 		uberForClient: func(world2 *world, client2 *passenger, ubers *[]*Uber) bool {
 			total := 0.0
-			//ubers :=
 			if len(*ubers) == 0 { // No ubers avalaible
 				return false
 			}
@@ -95,9 +94,6 @@ func createWorld(maxTime int) *world {
 				}
 			}
 			uber := selectConditionedUber(probs)
-			//if !uber.setClient(uber, client2) {
-			//	world2.uberForClient(world2, client2)
-			//}
 			uber.setClient(uber, client2)
 			return true
 		},
@@ -123,7 +119,6 @@ func createWorld(maxTime int) *world {
 				}
 				world2.time += 1
 				world2.instantSave(world2)
-				//log.Println(world2.time, world2.Ubertraveled)
 			}
 			end := time.Now()
 			world2.Runtime = end.Sub(start).String()
