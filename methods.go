@@ -43,13 +43,13 @@ func fileRoutine(world *world, requestPath string, timePath string) error {
 }
 
 func morningRoutine(world *world) error {
-	return fileRoutine(world, filepath.Join("data", "requests_1.dat"), filepath.Join("data", "manana.dat"))
+	return fileRoutine(world, filepath.Join("./", "data", "requests_1.dat"), filepath.Join("./", "data", "manana.dat"))
 }
 func afternoonRoutine(world *world) error {
-	return fileRoutine(world, filepath.Join("data", "requests_2.dat"), filepath.Join("data", "tarde.dat"))
+	return fileRoutine(world, filepath.Join("./", "data", "requests_2.dat"), filepath.Join("./", "data", "tarde.dat"))
 }
 func nightRoutine(world *world) error {
-	return fileRoutine(world, filepath.Join("data", "requests_3.dat"), filepath.Join("data", "noche.dat"))
+	return fileRoutine(world, filepath.Join("./", "data", "requests_3.dat"), filepath.Join("./", "data", "noche.dat"))
 }
 func randomRoutine(world *world) {
 	rand.Seed(time.Now().Unix())
