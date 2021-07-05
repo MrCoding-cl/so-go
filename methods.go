@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -43,13 +44,13 @@ func fileRoutine(world *world, requestPath string, timePath string) error {
 }
 
 func morningRoutine(world *world) error {
-	return fileRoutine(world, "data"+string(os.PathSeparator)+"requests_1.dat", "data"+string(os.PathSeparator)+"manana.dat")
+	return fileRoutine(world, filepath.FromSlash("data"+string(os.PathSeparator)+"requests_1.dat"), filepath.FromSlash("data"+string(os.PathSeparator)+"manana.dat"))
 }
 func afternoonRoutine(world *world) error {
-	return fileRoutine(world, "data"+string(os.PathSeparator)+"requests_2.dat", "data"+string(os.PathSeparator)+"tarde.dat")
+	return fileRoutine(world, filepath.FromSlash("data"+string(os.PathSeparator)+"requests_2.dat"), filepath.FromSlash("data"+string(os.PathSeparator)+"tarde.dat"))
 }
 func nightRoutine(world *world) error {
-	return fileRoutine(world, "data"+string(os.PathSeparator)+"requests_3.dat", "data"+string(os.PathSeparator)+"noche.dat")
+	return fileRoutine(world, filepath.FromSlash("data"+string(os.PathSeparator)+"requests_3.dat"), filepath.FromSlash("data"+string(os.PathSeparator)+"noche.dat"))
 }
 func randomRoutine(world *world) {
 	rand.Seed(time.Now().Unix())

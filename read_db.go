@@ -106,7 +106,6 @@ func readDataRequest(path string) []RequestFormat {
 	content, _ := os.Open(path)
 	reader := bufio.NewReader(content)
 	lines := readRequest(content, reader)
-
 	return lines
 
 }
